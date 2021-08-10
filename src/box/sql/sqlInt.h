@@ -4006,6 +4006,8 @@ sql_analysis_load(struct sql *db);
  */
 struct sql_key_info {
 	sql *db;
+	/** Informations about all field types and key parts. */
+	struct sql_space_info *info;
 	/**
 	 * Key definition created from this object,
 	 * see sql_key_info_to_key_def().
@@ -4054,6 +4056,64 @@ sql_key_info_unref(struct sql_key_info *key_info);
  */
 struct key_def *
 sql_key_info_to_key_def(struct sql_key_info *key_info);
+
+/**
+ * Structure that is used to store information about ephemeral space field types
+ * and fieldno of key parts.
+ */
+struct sql_space_info {
+	/** Field types of all fields of ephemeral space. */
+	enum field_type *types;
+	/** Collation ids of all fields of ephemeral space. */
+	uint32_t *coll_ids;
+	/**
+	 * Fieldno key parts of the ephemeral space. If NULL, then the index
+	 * consists of all fields in sequential order.
+	 */
+	uint32_t *parts;
+	/** Number of fields of ephemetal space. */
+	uint32_t field_count;
+	/**
+	 * Number of parts in primary index of ephemetal space. If 0 then parts
+	 * is also NULL.
+	 */
+	uint32_t part_count;
+	/** Sort order of index. */
+	enum sort_order sort_order;
+};
+
+/**
+ * Allocate and initialize with default values a structure that will be used to
+ * store information about ephemeral space field types and key parts.
+ */
+struct sql_space_info *
+sql_space_info_new(uint32_t field_count, uint32_t part_count);
+
+/**
+ * Initialize the field types and key parts of space_info with space_def.
+ * Additionally added one more field type and key part for rowid. Rowid is
+ * always INTEGER. Key parts will be initialized with the same values as the
+ * field types. The number of initialized field types and key parts will be the
+ * same as the field_count in space_def plus one.
+ */
+struct sql_space_info *
+sql_space_info_new_from_space_def(const struct space_def *def);
+
+/**
+ * Initialize the field types and key parts of space_info with index_def.
+ * Key parts will be initialized with the same values as the field types. The
+ * number of initialized field types and key parts will be the same as the
+ * part_count in index_def.
+ */
+struct sql_space_info *
+sql_space_info_new_from_index_def(const struct index_def *def, bool has_rowid);
+
+/**
+ * Allocate and initialize an ephemeral space. Information about field types and
+ * key parts is taken from the space_info structure.
+ */
+struct space *
+sql_ephemeral_space_new_from_info(const struct sql_space_info *info);
 
 /**
  * Check if the function implements LIKE-style comparison & if it
