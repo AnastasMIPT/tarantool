@@ -454,7 +454,7 @@ build_freebsd:
 
 test_freebsd_no_deps: build_freebsd
 	make LuaJIT-test
-	cd test && ./test-run.py --force $(TEST_RUN_EXTRA_PARAMS)
+	cd test && ./test-run.py $(TEST_RUN_EXTRA_PARAMS)
 
 test_freebsd: deps_freebsd test_freebsd_no_deps
 

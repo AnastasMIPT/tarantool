@@ -1,5 +1,5 @@
 GITLAB_MAKE:=${MAKE} -f .gitlab.mk
-TRAVIS_MAKE:=${MAKE}  .travis.mk
+TRAVIS_MAKE:=${MAKE} -f .travis.mk
 
 # Pass *_no_deps goals to .travis.mk.
 test_%:

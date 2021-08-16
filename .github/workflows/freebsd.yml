@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  CI_MAKE: make .gitlab.mk
+  CI_MAKE: make -f .gitlab.mk
 
 jobs:
   freebsd:
@@ -49,4 +49,4 @@ jobs:
         with:
           name: freebsd
           retention-days: 21
-          path: ./build/test/var/artifacts
+          path: ./artifacts
